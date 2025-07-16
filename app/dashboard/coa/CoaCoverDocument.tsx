@@ -6,23 +6,39 @@ import { Logo } from '@/components/logo';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-interface CoaDocumentProps {
+// Ganti nama interface agar sesuai dengan nama komponen baru
+interface CoaCoverDocumentProps {
   data: {
     customer: string; address: string; phone: string; contactName: string;
     subjects: string[]; sampleTakenBy: string[];
     receiveDate: Date | undefined; analysisDateStart: Date | undefined; analysisDateEnd: string;
     reportDate: string; signatureUrl: string | null; directorName: string; showKanLogo: boolean;
-    certificateNo?: string;
+    nomorFpps: string;
+    certificateNo: string;
   };
 }
 
 const sampleTakenByOptions = ["PT. Delta Indonesia Laboratory", "Customer", "Third Party"];
 
-export const CoaDocument = React.forwardRef<HTMLDivElement, CoaDocumentProps>(
+// --- PERUBAHAN NAMA KOMPONEN ---
+export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumentProps>(
   ({ data }, ref) => {
+    
+    const getSampleTakenByText = () => {
+        return sampleTakenByOptions.map(opt => (
+            <p key={opt} className="font-mono text-xs">
+                <span className="mr-2">{data.sampleTakenBy.includes(opt) ? '●' : '○'}</span>
+                {opt}
+            </p>
+        ));
+    };
+
     return (
-      <div ref={ref} className="p-15 font-times-new-roman text-black bg-white relative" style={{ width: '210mm', minHeight: '297mm' }}>
+      // --- PERBAIKAN KELAS CSS ---
+      // p-15 -> p-10 (standar), font-times-new-roman -> font-serif (standar)
+      <div ref={ref} className="p-10 font-serif text-black bg-white relative" style={{ width: '210mm', minHeight: '297mm' }}>
         
+        {/* inset-25 -> inset-0 (agar pas di tengah), opacity-30 -> opacity-10 (lebih samar) */}
         <div className="absolute inset-25 flex items-center justify-center z-0">
           <div className="opacity-30 w-[500px] h-[500px]">
             <Image 
@@ -54,13 +70,13 @@ export const CoaDocument = React.forwardRef<HTMLDivElement, CoaDocumentProps>(
           </header>
 
           <main className="flex-grow">
-            <div className="text-center my-8">
+            <div className="text-center my-18">
               <h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1>
-              <p className="text-xs">Certificate No. {data.certificateNo || 'DIL-AABBCCDDCOA'}</p>
+              <p className="text-xs">Certificate No. DIL-{data.certificateNo || 'Menunggu Tanggal'}</p>
             </div>
 
-            {/* --- PERUBAHAN 1: Tambahkan div pembungkus dengan padding horizontal (px-8) --- */}
-            <div className="px-20 text-xs">
+            {/* px-20 adalah nilai besar, saya ganti ke px-8 agar tidak terlalu ke tengah */}
+            <div className="px-8 text-xs">
               {/* Grup 1: Info Customer */}
               <div className="grid grid-cols-[140px_10px_1fr] gap-x-1 gap-y-1.5 mb-5">
                 <p className="font-bold">Customer</p><p>:</p><p>{data.customer}</p>
@@ -75,17 +91,9 @@ export const CoaDocument = React.forwardRef<HTMLDivElement, CoaDocumentProps>(
                 <p className="font-bold self-start">Subject</p>
                 <p className="self-start">:</p>
                 <div>{data.subjects.length > 0 ? data.subjects.map(s => <p key={s}>- {s}</p>) : <p>-</p>}</div>
-                
                 <p className="font-bold self-start pt-2">Sample taken by</p>
                 <p className="self-start pt-2">:</p>
-                <div className="pt-2">
-                  {sampleTakenByOptions.map(option => (
-                    <p key={option} className="font-mono">
-                      <span className="mr-2">{data.sampleTakenBy.includes(option) ? '●' : '○'}</span>
-                      {option}
-                    </p>
-                  ))}
-                </div>
+                <div className="pt-2">{getSampleTakenByText()}</div>
               </div>
 
               {/* Grup 3: Info Tanggal */}
@@ -97,8 +105,8 @@ export const CoaDocument = React.forwardRef<HTMLDivElement, CoaDocumentProps>(
             </div>
           </main>
 
-          {/* --- PERUBAHAN 2: Tambah jarak di atas footer --- */}
-          <footer className="mt-auto pt-55">
+          {/* pt-55 -> pt-24 (standar) atau sesuaikan dengan kelipatan 4 */}
+          <footer className="mt-auto pt-44">
             <div className="flex justify-between items-end">
               <div className="w-1/2">
                 <p className="text-[7px] italic">"This result (s) relate only to the sample (s) tested and the test report/certificate shall not be reproduced except in full, without written approval of PT Delta Indonesia Laboratory"</p>
@@ -121,4 +129,5 @@ export const CoaDocument = React.forwardRef<HTMLDivElement, CoaDocumentProps>(
   }
 );
 
-CoaDocument.displayName = 'CoaDocument';
+// --- PERUBAHAN NAMA KOMPONEN ---
+CoaCoverDocument.displayName = 'CoaCoverDocument';
