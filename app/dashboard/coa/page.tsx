@@ -1,3 +1,5 @@
+// app/dashboard/coa/page.tsx (Ganti seluruh isi file)
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -36,6 +38,7 @@ import { ISPUForm } from './components/ISPUForm';
 import { NonSSEForm } from './components/NonSSEForm';
 import { NoiseRegulationSelection } from './components/NoiseRegulationSelection';
 import { NoiseForm } from './components/NoiseForm';
+import { QrCodeModal } from './components/QrCodeModal';
 
 
 // --- Impor Dokumen Cetak ---
@@ -101,13 +104,14 @@ export default function CoaPage() {
 
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [previewNode, setPreviewNode] = useState<React.ReactNode>(null);
+    const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
     const searchParams = useSearchParams();
     const router = useRouter();
 
     useEffect(() => {
         const idFromUrl = searchParams.get('id');
-        if (idFromUrl && !reportId) { 
+        if (idFromUrl && idFromUrl !== reportId) { 
             const loadReport = async () => {
                 setView('loading');
                 try {
@@ -154,6 +158,15 @@ export default function CoaPage() {
             const response = await fetch(`/api/fpps/${searchKey}`);
             if (!response.ok) throw new Error('Data tidak ditemukan');
             const fppsData = await response.json();
+            
+            // --- MODIFIKASI DIMULAI DI SINI ---
+            // 1. Buat ID unik baru di frontend
+            const newReportId = nanoid(24); 
+
+            // 2. Set ID ini ke state, sehingga bisa langsung digunakan
+            setReportId(newReportId);
+            // --- AKHIR MODIFIKASI ---
+            
             setCoaData({
                 nomorFpps: fppsData.formData.nomorFpps, customer: fppsData.formData.namaPelanggan, address: fppsData.formData.alamatPelanggan, phone: fppsData.formData.noTelp,
                 contactName: fppsData.formData.contactPerson || 'Bapak/Ibu...', subjects: [], sampleTakenBy: ["PT. Delta Indonesia Laboratory"],
@@ -171,35 +184,46 @@ export default function CoaPage() {
     };
     
     const handleSaveReport = async () => {
-        if (!coaData) return alert('Data cover belum lengkap.');
+        if (!coaData || !reportId) return alert('Data cover atau ID Laporan tidak lengkap.');
         setIsLoading(true);
-        
+
+        // --- MODIFIKASI DIMULAI DI SINI ---
+        // Kirim _id yang sudah dibuat frontend ke backend saat membuat laporan baru
         const reportPayload = {
+            _id: reportId, // Tambahkan _id ke payload
             coverData: coaData,
             activeTemplates: activeTemplates,
         };
+        // --- AKHIR MODIFIKASI ---
 
         try {
             let response;
-            if (reportId) {
+            // Cek apakah ini update (PUT) atau pembuatan baru (POST)
+            const resCheck = await fetch(`/api/reports/${reportId}`);
+            const isExisting = resCheck.ok;
+
+            if (isExisting) {
+                // Laporan sudah ada, gunakan metode PUT untuk update
                 response = await fetch(`/api/reports/${reportId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(reportPayload),
+                    body: JSON.stringify({ coverData: coaData, activeTemplates: activeTemplates }), // Saat PUT, tidak perlu kirim _id di body
                 });
             } else {
+                // Laporan belum ada, gunakan metode POST untuk membuat baru
                 response = await fetch('/api/reports', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(reportPayload),
+                    body: JSON.stringify(reportPayload), // Kirim payload lengkap dengan _id
                 });
             }
 
             const result = await response.json();
             if (result.success) {
                 alert('Laporan berhasil disimpan!');
-                if (!reportId) {
-                    setReportId(result.data._id);
+                if (!isExisting) {
+                    // Update URL jika ini adalah penyimpanan pertama kali
+                    router.push(`/dashboard/coa?id=${result.data._id}`, { scroll: false });
                 }
             } else {
                 throw new Error(result.error || 'Gagal menyimpan laporan.');
@@ -259,8 +283,7 @@ export default function CoaPage() {
         const previewHandler = () => {
             let previewComponent;
             const pageNumber = activeTemplates.findIndex(t => t.id === template.id) + 2 || 2;
-            // Gabungkan data template dengan data cover
-            const previewData = { ...coaData, ...template, totalPages, pageNumber };
+            const previewData = { ...coaData, ...template, totalPages, pageNumber, reportId };
             
             if (template.templateType === 'odor') previewComponent = <TemplateOdorDocument data={previewData} />;
             else if (template.templateType === 'illumination') previewComponent = <TemplateIlluminationDocument data={previewData} />;
@@ -301,8 +324,8 @@ export default function CoaPage() {
         switch (view) {
             case 'loading': return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-white" /></div>;
             case 'search': return <SearchCard fppsInput={fppsInput} setFppsInput={setFppsInput} handleCariFpps={handleCariFpps} isLoading={isLoading} />;
-            case 'cover': return coaData && <CoverForm coaData={coaData} handleCoaChange={handleCoaChange} handleCheckboxChange={handleCheckboxChange} handleSignatureUpload={() => {}} onNextStep={() => setView('dashboard')} onPreview={() => handlePreview(<CoaCoverDocument data={{...coaData, totalPages}}/>)} />;
-            case 'dashboard': return <ReportDashboard templates={activeTemplates} onAddNew={() => setView('template_selection')} onEdit={handleEditTemplate} onRemove={handleRemoveTemplate} onSave={handleSaveReport} onPrint={handlePrint} isSaving={isLoading} />;
+            case 'cover': return coaData && <CoverForm coaData={coaData} handleCoaChange={handleCoaChange} handleCheckboxChange={handleCheckboxChange} handleSignatureUpload={() => {}} onNextStep={() => setView('dashboard')} onPreview={() => handlePreview(<CoaCoverDocument data={{...coaData, totalPages, reportId}}/>)} />;
+            case 'dashboard': return <ReportDashboard templates={activeTemplates} onAddNew={() => setView('template_selection')} onEdit={handleEditTemplate} onRemove={handleRemoveTemplate} onSave={handleSaveReport} onPrint={handlePrint} isSaving={isLoading} reportId={reportId} onGenerateQrClick={() => setIsQrModalOpen(true)} />;
             
             case 'template_selection': return <TemplateSelection templates={coaTemplates} onSelectTemplate={(type) => {
                 let newTemplate;
@@ -414,11 +437,18 @@ export default function CoaPage() {
             default: return <p>Tampilan tidak ditemukan.</p>;
         }
     };
+    
+    const getVerificationUrl = () => {
+        if (typeof window !== 'undefined' && reportId) {
+            return `${window.location.origin}/verify/${reportId}`;
+        }
+        return '';
+    };
 
     return (
         <>
             <div className="print-only">
-                {coaData && <CoaCoverDocument data={{...coaData, totalPages}} />}
+                {coaData && <CoaCoverDocument data={{...coaData, totalPages, reportId}} />}
                 {activeTemplates.map((template, index) => {
                     const pageNumber = index + 2;
                     const fullTemplateData = {
@@ -426,6 +456,7 @@ export default function CoaPage() {
                         ...template,
                         totalPages, 
                         pageNumber,
+                        reportId,
                         sampleInfo: {
                             ...template.sampleInfo,
                             samplingDate: coaData.receiveDate ? format(new Date(coaData.receiveDate), "MMMM dd, yyyy", { locale: id }) : '',
@@ -469,6 +500,13 @@ export default function CoaPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            
+            <QrCodeModal
+                isOpen={isQrModalOpen}
+                onClose={() => setIsQrModalOpen(false)}
+                url={getVerificationUrl()}
+                reportNumber={coaData?.certificateNo || reportId || ''}
+            />
         </>
     );
 }
