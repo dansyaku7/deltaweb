@@ -123,24 +123,27 @@
 
 /* Menambahkan style khusus untuk mencetak */
 @media print {
-    /* Pertama, sembunyikan semua elemen di body */
-    body * {
-        visibility: hidden;
-    }
+  /* Sembunyikan semua elemen yang tidak ingin dicetak */
+  .no-print {
+    display: none !important; /* Tambahkan !important untuk memastikan aturan ini menang */
+  }
 
-    /* Kedua, tampilkan HANYA area cetak dan semua isinya */
-    .print-only, .print-only * {
-        visibility: visible;
-    }
+  /* Tampilkan elemen yang hanya untuk dicetak */
+  .print-only {
+    display: block;
+  }
 
-    /* Ketiga, posisikan area cetak agar mengisi halaman penuh */
-    .print-only {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: auto;
-    }
+  /* Aturan untuk pindah halaman */
+  .page-break {
+    page-break-before: always;
+  }
+}
+
+@media screen {
+  /* Sembunyikan elemen cetak saat tampilan di layar */
+  .print-only {
+    display: none;
+  }
 }
 
 @page {

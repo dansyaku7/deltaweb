@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-// 1. Impor useRouter untuk navigasi dan LogOut untuk ikon
 import { usePathname, useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import {
@@ -51,13 +50,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className='flex min-h-screen bg-slate-950 text-slate-100'>
-      {/* --- Perubahan struktur di dalam <aside> --- */}
-      <aside className='fixed left-0 top-0 flex h-full w-72 flex-col bg-slate-900 p-6'>
+      {/* Sidebar tetap disembunyikan saat print */}
+      <aside className='fixed left-0 top-0 flex h-full w-72 flex-col bg-slate-900 p-6 no-print'>
         <div className='mb-10'>
           <Logo />
         </div>
         
-        {/* Navigasi utama dibuat flex-1 agar mendorong tombol logout ke bawah */}
         <nav className='flex-1 space-y-8 overflow-y-auto'>
           {sidebarNavItems.map((section) => (
             <div key={section.title}>
@@ -86,7 +84,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           ))}
         </nav>
 
-        {/* 4. Tambahkan tombol logout di sini */}
         <div className="mt-8 pt-4 border-t border-slate-800">
             <button
                 onClick={handleLogout}
@@ -98,7 +95,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      <main className='ml-72 flex-1 p-10'>{children}</main>
+      {/* --- MODIFIED: Tambahkan kelas print:ml-0 dan print:p-0 --- */}
+      {/* Ini akan mereset margin dan padding khusus untuk media cetak */}
+      <main className='ml-72 print:ml-0 flex-1 p-10 print:p-0'>{children}</main>
     </div>
   );
 }

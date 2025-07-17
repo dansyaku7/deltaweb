@@ -1,3 +1,5 @@
+// components/AirAmbientForm.tsx
+
 'use client';
 
 import React from 'react';
@@ -9,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch"; // Import Switch
 import { Pencil, Eye, EyeOff, Settings } from 'lucide-react'; // Import Settings
 
-export function WastewaterForm({
+export function AirAmbientForm({
   template,
   onTemplateChange,
   onSave,
@@ -17,12 +19,14 @@ export function WastewaterForm({
   onPreview,
 }) {
 
+  // Fungsi untuk menangani perubahan pada setiap parameter
   const handleParameterChange = (index: number, field: string, value: any) => {
     const newResults = [...template.results];
     newResults[index][field] = value;
     onTemplateChange({ ...template, results: newResults });
   };
 
+  // Fungsi untuk menangani perubahan pada informasi sampel umum
   const handleSampleInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     onTemplateChange({ ...template, sampleInfo: { ...template.sampleInfo, [name]: value } });
@@ -32,30 +36,52 @@ export function WastewaterForm({
     <Card className="w-full max-w-6xl bg-slate-900 border-slate-800">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle>Isi Detail & Hasil Tes Wastewater</CardTitle>
+          <CardTitle>Isi Detail & Hasil Tes Air Ambient</CardTitle>
           <Button variant="outline" onClick={onBack}>Batal</Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-8">
+        {/* Bagian Informasi Sampel */}
         <div>
           <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">Informasi Sampel & Catatan</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div><Label htmlFor="sampleNo">Sampel No.</Label><Input id="sampleNo" name="sampleNo" value={template.sampleInfo.sampleNo || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
             <div><Label htmlFor="samplingLocation">Sampling Location</Label><Input id="samplingLocation" name="samplingLocation" value={template.sampleInfo.samplingLocation || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
-            <div><Label htmlFor="samplingTime">Sampling Time</Label><Input id="samplingTime" name="samplingTime" value={template.sampleInfo.samplingTime || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
+            <div>
+                <Label htmlFor="samplingTime">Sampling Time</Label>
+                <Input id="samplingTime" name="samplingTime" value={template.sampleInfo.samplingTime || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="Contoh: 10:30 WIB"/>
+            </div>
+            <div>
+                <Label htmlFor="samplingMethod">Sampling Method</Label>
+                <Input id="samplingMethod" name="samplingMethod" value={template.sampleInfo.samplingMethod || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/>
+            </div>
           </div>
-          <div className="mt-4">
-            <Label htmlFor="notes">Catatan Kaki (Regulatory Standard)</Label>
-            <Textarea id="notes" name="notes" value={template.sampleInfo.notes || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="Contoh: ** Minister of Environmental Decree..."/>
-          </div>
+            <div className="mt-4">
+             <Label htmlFor="notes">Catatan Kaki (Regulatory Standard)</Label>
+             <Textarea id="notes" name="notes" value={template.sampleInfo.notes || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="Contoh: ** Government Regulation of Republic Indonesia..."/>
+           </div>
         </div>
+
+        {/* Bagian Kondisi Lingkungan */}
+        <div>
+            <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">Ambient Environmental Condition</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div><Label htmlFor="coordinate">Coordinate</Label><Input id="coordinate" name="coordinate" value={template.sampleInfo.coordinate || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
+                <div><Label htmlFor="temperature">Temperature</Label><Input id="temperature" name="temperature" value={template.sampleInfo.temperature || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="... °C"/></div>
+                <div><Label htmlFor="pressure">Pressure</Label><Input id="pressure" name="pressure" value={template.sampleInfo.pressure || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="... mmHg"/></div>
+                <div><Label htmlFor="humidity">Humidity</Label><Input id="humidity" name="humidity" value={template.sampleInfo.humidity || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="... %RH"/></div>
+                <div><Label htmlFor="windSpeed">Wind Speed</Label><Input id="windSpeed" name="windSpeed" value={template.sampleInfo.windSpeed || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800" placeholder="... m/s"/></div>
+                <div><Label htmlFor="windDirection">Wind Direction</Label><Input id="windDirection" name="windDirection" value={template.sampleInfo.windDirection || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
+                <div><Label htmlFor="weather">Weather</Label><Input id="weather" name="weather" value={template.sampleInfo.weather || ''} onChange={handleSampleInfoChange} className="mt-1 bg-slate-800"/></div>
+            </div>
+        </div>
+
+        {/* Bagian Hasil Pengujian Parameter */}
         <div>
           <h3 className="text-xl font-semibold text-slate-200 border-b border-slate-700 pb-2 mb-4">Hasil Pengujian Parameter</h3>
           <div className="space-y-4">
             {template.results.map((param: any, index: number) => (
-              <React.Fragment key={`${param.name}-${index}`}>
-                {param.category && <h4 className="font-bold text-slate-300 pt-4 pb-2">{param.category}</h4>}
-                <div className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-4">
+                <div key={`${param.name}-${index}`} className="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-4">
                     <div className="flex justify-between items-center">
                         <p className="font-semibold text-white">{param.name}</p>
                         <Button variant="ghost" size="icon" onClick={() => handleParameterChange(index, 'isVisible', !param.isVisible)} className="text-slate-400 hover:text-white h-8 w-8">
@@ -64,7 +90,7 @@ export function WastewaterForm({
                     </div>
                     {param.isVisible && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
+                             <div>
                                 <Label>Testing Result</Label>
                                 <Input value={param.testingResult || ''} onChange={(e) => handleParameterChange(index, 'testingResult', e.target.value)} className="mt-1 bg-slate-800"/>
                             </div>
@@ -83,7 +109,6 @@ export function WastewaterForm({
                         </div>
                     )}
                 </div>
-              </React.Fragment>
             ))}
           </div>
         </div>

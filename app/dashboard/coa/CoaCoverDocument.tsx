@@ -6,7 +6,6 @@ import { Logo } from '@/components/logo';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
-// Ganti nama interface agar sesuai dengan nama komponen baru
 interface CoaCoverDocumentProps {
   data: {
     customer: string; address: string; phone: string; contactName: string;
@@ -15,12 +14,12 @@ interface CoaCoverDocumentProps {
     reportDate: string; signatureUrl: string | null; directorName: string; showKanLogo: boolean;
     nomorFpps: string;
     certificateNo: string;
+    totalPages: number;
   };
 }
 
 const sampleTakenByOptions = ["PT. Delta Indonesia Laboratory", "Customer", "Third Party"];
 
-// --- PERUBAHAN NAMA KOMPONEN ---
 export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumentProps>(
   ({ data }, ref) => {
     
@@ -34,11 +33,8 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
     };
 
     return (
-      // --- PERBAIKAN KELAS CSS ---
-      // p-15 -> p-10 (standar), font-times-new-roman -> font-serif (standar)
       <div ref={ref} className="p-10 font-serif text-black bg-white relative" style={{ width: '210mm', minHeight: '297mm' }}>
         
-        {/* inset-25 -> inset-0 (agar pas di tengah), opacity-30 -> opacity-10 (lebih samar) */}
         <div className="absolute inset-25 flex items-center justify-center z-0">
           <div className="opacity-30 w-[500px] h-[500px]">
             <Image 
@@ -62,7 +58,7 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
                   <div className="text-[7px] leading-tight font-sans mt-1 space-y-px">
                     <p>SK-KLHK No.00161/LPJ/Labling-1/LRK/KLHK</p>
                     <p>7-a.DEC.2023-6.DEC.2028</p>
-                    <p>Halaman 1 dari ...</p>
+                    <p>Halaman 1 dari {data.totalPages}</p>
                   </div>
                 </div>
               )}
@@ -74,10 +70,8 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
               <h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1>
               <p className="text-xs">Certificate No. DIL-{data.certificateNo || 'Menunggu Tanggal'}</p>
             </div>
-
-            {/* px-20 adalah nilai besar, saya ganti ke px-8 agar tidak terlalu ke tengah */}
+            
             <div className="px-8 text-xs">
-              {/* Grup 1: Info Customer */}
               <div className="grid grid-cols-[140px_10px_1fr] gap-x-1 gap-y-1.5 mb-5">
                 <p className="font-bold">Customer</p><p>:</p><p>{data.customer}</p>
                 <p className="font-bold">Address</p><p>:</p><p>{data.address}</p>
@@ -86,7 +80,6 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
                 <p className="font-bold">Phone</p><p>:</p><p>{data.phone}</p>
               </div>
 
-              {/* Grup 2: Info Subject & Sampel */}
               <div className="grid grid-cols-[140px_10px_1fr] gap-x-1 gap-y-1.5 mb-5">
                 <p className="font-bold self-start">Subject</p>
                 <p className="self-start">:</p>
@@ -96,7 +89,6 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
                 <div className="pt-2">{getSampleTakenByText()}</div>
               </div>
 
-              {/* Grup 3: Info Tanggal */}
               <div className="grid grid-cols-[140px_10px_1fr] gap-x-1 gap-y-1.5">
                 <p className="font-bold">Sample Receive Date</p><p>:</p><p>{data.receiveDate ? format(data.receiveDate, 'MMMM dd, yyyy', { locale: id }) : ''}</p>
                 <p className="font-bold">Sample Analysis Date</p><p>:</p><p>{data.analysisDateStart ? `${format(data.analysisDateStart, 'MMMM dd, yyyy', { locale: id })} to ${data.analysisDateEnd}` : ''}</p>
@@ -104,8 +96,7 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
               </div>
             </div>
           </main>
-
-          {/* pt-55 -> pt-24 (standar) atau sesuaikan dengan kelipatan 4 */}
+          
           <footer className="mt-auto pt-44">
             <div className="flex justify-between items-end">
               <div className="w-1/2">
@@ -113,7 +104,7 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
                 <p className="text-[8px] font-bold mt-4">FR-7.3.3</p>
               </div>
               <div className="text-center text-xs w-5/12 ml-auto">
-                  <p>This Certificate of Analysis consist of ... pages</p>
+                  <p>This Certificate of Analysis consist of {data.totalPages} pages</p>
                   <p className="mt-1">Bekasi, {data.reportDate}</p>
                   <div className="relative h-16 w-32 my-2 mx-auto">
                       {data.signatureUrl && <Image src={data.signatureUrl} alt="Signature" layout="fill" objectFit="contain" />}
@@ -129,5 +120,4 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
   }
 );
 
-// --- PERUBAHAN NAMA KOMPONEN ---
 CoaCoverDocument.displayName = 'CoaCoverDocument';

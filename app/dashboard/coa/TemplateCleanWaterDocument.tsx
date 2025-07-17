@@ -4,11 +4,10 @@ import React from 'react';
 import Image from 'next/image';
 import { Logo } from '@/components/logo';
 
-export const TemplateWastewaterDocument = React.forwardRef<HTMLDivElement, { data: any }>(
+export const TemplateCleanWaterDocument = React.forwardRef<HTMLDivElement, { data: any }>(
   ({ data }, ref) => {
     const { results, sampleInfo, certificateNo, showKanLogo, totalPages, pageNumber } = data;
     
-    // Filter parameter yang akan ditampilkan di dokumen cetak
     const visibleResults = results ? results.filter((param: any) => param.isVisible) : [];
 
     return (
@@ -34,7 +33,7 @@ export const TemplateWastewaterDocument = React.forwardRef<HTMLDivElement, { dat
             <div className="text-center my-4"><h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1><p className="text-xs">Certificate No. {certificateNo ? `DIL-${certificateNo}`: 'DIL-AABBCCDDCOA'}</p></div>
             <table className="w-full border-collapse border-2 border-black mb-4">
               <thead><tr className="bg-gray-200 font-bold text-center"><th className="border border-black p-1">Sample No.</th><th className="border border-black p-1">Sampling Location</th><th className="border border-black p-1">Sample Description</th><th className="border border-black p-1">Sampling Date</th><th className="border border-black p-1">Sampling Time</th><th className="border border-black p-1">Sampling Methods</th><th className="border border-black p-1">Date Received</th><th className="border border-black p-1">Interval Testing Date</th></tr></thead>
-              <tbody><tr><td className="border border-black p-1 text-center">{sampleInfo.sampleNo || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.samplingLocation || '-'}</td><td className="border border-black p-1 text-center">Wastewater</td><td className="border border-black p-1 text-center">{sampleInfo.samplingDate || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.samplingTime || '-'}</td><td className="border border-black p-1 text-center">SNI 8990-2021</td><td className="border border-black p-1 text-center">{sampleInfo.dateReceived || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.intervalTestingDate || '-'}</td></tr></tbody>
+              <tbody><tr><td className="border border-black p-1 text-center">{sampleInfo.sampleNo || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.samplingLocation || '-'}</td><td className="border border-black p-1 text-center">Clean Water</td><td className="border border-black p-1 text-center">{sampleInfo.samplingDate || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.samplingTime || '-'}</td><td className="border border-black p-1 text-center">SNI 8995-2021</td><td className="border border-black p-1 text-center">{sampleInfo.dateReceived || '-'}</td><td className="border border-black p-1 text-center">{sampleInfo.intervalTestingDate || '-'}</td></tr></tbody>
             </table>
             <table className="w-full border-collapse border-2 border-black text-[9px]">
               <thead><tr className="bg-gray-200 font-bold"><th className="border border-black p-1 w-8 font-bold">No</th><th className="border border-black p-1 font-bold text-left">Parameters</th><th className="border border-black p-1 w-20 font-bold">Unit</th><th className="border border-black p-1 w-24 font-bold">Testing Result</th><th className="border border-black p-1 w-28 font-bold">Regulatory Standard**</th><th className="border border-black p-1 font-bold text-left">Methods</th></tr></thead>
@@ -47,7 +46,7 @@ export const TemplateWastewaterDocument = React.forwardRef<HTMLDivElement, { dat
                 ))}
               </tbody>
             </table>
-            <div className="mt-4 text-[8px]"><p className='font-bold'>Notes:</p><p>{'<'} : Less Than MDL (Method Detection Limit)</p><p>* : Accredited Parameters</p><p>{sampleInfo.notes || '** Default Regulatory Note'}</p></div>
+            <div className="mt-4 text-[8px]"><p className='font-bold'>Notes:</p><p>{'<'} : Less Than MDL (Method Detection Limit)</p><p>{sampleInfo.notes || '** Default Regulatory Note'}</p></div>
           </main>
         </div>
       </div>
@@ -55,4 +54,4 @@ export const TemplateWastewaterDocument = React.forwardRef<HTMLDivElement, { dat
   }
 );
 
-TemplateWastewaterDocument.displayName = 'TemplateWastewaterDocument';
+TemplateCleanWaterDocument.displayName = 'TemplateCleanWaterDocument';
