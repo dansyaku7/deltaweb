@@ -35,7 +35,7 @@ export const TemplateAirAmbientDocument = React.forwardRef<HTMLDivElement, { dat
             )}
           </header>
           <main className="text-[9px]">
-            <div className="text-center my-4"><h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1><p className="text-xs">Certificate No. {certificateNo ? `DIL-${certificateNo}`: 'DIL-AABBCCDDCOA'}</p></div>
+            <div className="text-center my-4"><h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1><p className="text-xs">Certificate No. {certificateNo ? `${certificateNo}`: 'DIL-AABBCCDDCOA'}</p></div>
             
             {/* Tabel Informasi Sampel */}
             <table className="w-full border-collapse border-2 border-black mb-4">

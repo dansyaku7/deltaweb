@@ -1,3 +1,5 @@
+// app/dashboard/coa/components/CoverForm.tsx (Ganti Seluruh Isi)
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -8,9 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from '@/components/ui/switch';
-import { CalendarIcon, Upload } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import Image from 'next/image';
 
 const allSubjects = [
   "Ambient Outdoor Air Quality", "Workplace Air Quality", "Noise", "Odor", 
@@ -19,6 +22,14 @@ const allSubjects = [
 const sampleTakenByOptions = ["PT. Delta Indonesia Laboratory", "Customer", "Third Party"];
 
 export function CoverForm({ coaData, handleCheckboxChange, handleCoaChange, handleSignatureUpload, onNextStep }) {
+  
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      handleSignatureUpload(file);
+    }
+  };
+
   return (
     <Card className="w-full max-w-4xl bg-slate-900 border-slate-800">
       <CardHeader><CardTitle>Lengkapi Data COA (Halaman 1)</CardTitle></CardHeader>
@@ -92,8 +103,13 @@ export function CoverForm({ coaData, handleCheckboxChange, handleCoaChange, hand
             <div>
               <Label className="text-slate-300">Tanda Tangan Digital (PNG)</Label>
               <div className="mt-2 flex items-center gap-4">
-                <Input type="file" accept="image/png" onChange={handleSignatureUpload} className="flex-1"/>
-                {coaData.signatureUrl && (<img src={coaData.signatureUrl} alt="Preview" className="h-10 w-20 rounded border border-slate-600 bg-slate-700 object-contain p-1" />)}
+                <Input id="signature-upload" type="file" accept="image/png" onChange={onFileChange} className="flex-1 file:text-white"/>
+                
+                {coaData.signatureUrl && (
+                    <div className="h-10 w-20 p-1 rounded border border-slate-600 bg-white flex items-center justify-center">
+                        <Image src={coaData.signatureUrl} alt="Preview TTD" width={80} height={40} style={{objectFit: 'contain'}} />
+                    </div>
+                )}
               </div>
             </div>
             <div className="col-span-2 flex items-center space-x-2 pt-2">

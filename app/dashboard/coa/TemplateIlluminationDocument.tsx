@@ -52,7 +52,7 @@ export const TemplateIlluminationDocument = React.forwardRef<HTMLDivElement, Tem
           <main className="text-[9px]">
             <div className="text-center my-4">
               <h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1>
-              <p className="text-xs">Certificate No. {data.certificateNo ? `DIL-${data.certificateNo}`: 'DIL-AABBCCDDCOA'}</p>
+              <p className="text-xs">Certificate No. {data.certificateNo ? `${data.certificateNo}`: 'DIL-AABBCCDDCOA'}</p>
             </div>
 
             <table className="w-full border-collapse border-2 border-black mb-4">

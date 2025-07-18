@@ -1,9 +1,9 @@
-// app/dashboard/coa/CoaCoverDocument.tsx (Final Fix Version)
+// app/dashboard/coa/CoaCoverDocument.tsx (Ganti Seluruh Isi)
 
 'use client';
 
 import React from 'react';
-import Image from 'next/image'; // Kita masih butuh ini untuk logo KAN & TTD
+import Image from 'next/image';
 import { Logo } from '@/components/logo';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -47,10 +47,8 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
     return (
       <div ref={ref} className="p-10 font-serif text-black bg-white relative flex flex-col [print-color-adjust:exact]" style={{ width: '210mm', height: '297mm' }}>
         
-        {/* --- PERUBAHAN UTAMA ADA DI SINI --- */}
         <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
           <div className="w-[500px] h-[500px]" style={{ opacity: 0.15 }}>
-            {/* Menggunakan tag <img> standar, bukan <Image> dari Next.js */}
             <img 
               src="/images/logo-delta-transparan.png" 
               alt="Logo DIL Watermark"
@@ -58,7 +56,6 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
             />
           </div>
         </div>
-        {/* --- AKHIR DARI PERUBAHAN --- */}
 
         <div className="relative z-10 flex flex-col flex-grow">
           <header>
@@ -78,6 +75,7 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
           <main className="flex-grow">
             <div className="text-center my-12">
               <h1 className="text-base font-bold tracking-wider">CERTIFICATE OF ANALYSIS (COA)</h1>
+              {/* PERBAIKAN: Menghapus awalan "DIL-" yang ditulis langsung */}
               <p className="text-xs">Certificate No. {data.certificateNo || '.........................'}</p>
             </div>
             
@@ -124,7 +122,12 @@ export const CoaCoverDocument = React.forwardRef<HTMLDivElement, CoaCoverDocumen
                   <p>This Certificate of Analysis consist of {data.totalPages} pages</p>
                   <p className="mt-1">Bekasi, {data.reportDate}</p>
                   <div className="relative h-20 w-32 my-1 mx-auto">
-                      {data.signatureUrl ? <Image src={data.signatureUrl} alt="Signature" layout="fill" objectFit="contain" /> : <div className="h-full w-full"></div>}
+                      {/* PERBAIKAN: Menggunakan tag <img> biasa untuk TTD agar pasti tercetak */}
+                      {data.signatureUrl ? (
+                        <img src={data.signatureUrl} alt="Signature" style={{width: '100%', height: '100%', objectFit: 'contain'}} />
+                      ) : (
+                        <div className="h-full w-full"></div>
+                      )}
                   </div>
                   <p className="font-bold underline">{data.directorName}</p>
                   <p>Direktur Utama</p>

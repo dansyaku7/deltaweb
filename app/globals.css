@@ -120,33 +120,34 @@
     @apply bg-background text-foreground;
   }
 }
-
 /* Menambahkan style khusus untuk mencetak */
 @media print {
-  /* Sembunyikan semua elemen yang tidak ingin dicetak */
+  /* Menyembunyikan elemen yang tidak ingin dicetak */
   .no-print {
-    display: none !important; /* Tambahkan !important untuk memastikan aturan ini menang */
+    display: none !important;
   }
 
-  /* Tampilkan elemen yang hanya untuk dicetak */
+  /* Menampilkan elemen yang hanya untuk dicetak */
   .print-only {
-    display: block;
+    display: block !important;
   }
 
-  /* Aturan untuk pindah halaman */
+  /* Memberi paksa halaman baru sebelum elemen ini */
   .page-break {
     page-break-before: always;
   }
 }
 
 @media screen {
-  /* Sembunyikan elemen cetak saat tampilan di layar */
+  /* Menyembunyikan elemen khusus cetak saat di layar */
   .print-only {
     display: none;
   }
 }
 
 @page {
-  size: A4 portrait; /* Mengatur ukuran kertas ke A4 Potrait */
-  margin: 0; /* Menghilangkan margin default dari browser */
+  /* Mengatur ukuran halaman cetak ke A4 potret */
+  size: A4 portrait;
+  /* Menghilangkan margin bawaan browser pada halaman cetak */
+  margin: 0;
 }
